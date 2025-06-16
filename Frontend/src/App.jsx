@@ -4,16 +4,17 @@ import { useAuthStore } from "./store/userAuthStore.js";
 import { useThemeStore } from "./store/useThemeStore.js";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-import { lazy,Suspense, useEffect } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import PrivateRoute from "./HOC/PrivateRoute.jsx";
 import PublicRoute from "./HOC/PublicRoute.jsx";
+import { ThemeContextChange } from "./Components/ThemeContext.jsx";
+import MainLayout from "./HOC/MainLayout.jsx";
 
-const HomePage = lazy(()=>import('./Pages/HomePage.jsx'));
-const SignupPage = lazy(()=>import('./Pages/SignupPage.jsx'));
-const LoginPage = lazy(()=>import('./Pages/LoginPage.jsx'));
-const SettingPage = lazy(()=>import('./Pages/SettingPage.jsx'));
-const ProfilePage = lazy(()=>import('./Pages/ProfilePage.jsx'));
-
+const HomePage = lazy(() => import("./Pages/HomePage.jsx"));
+const SignupPage = lazy(() => import("./Pages/SignupPage.jsx"));
+const LoginPage = lazy(() => import("./Pages/LoginPage.jsx"));
+const SettingPage = lazy(() => import("./Pages/SettingPage.jsx"));
+const ProfilePage = lazy(() => import("./Pages/ProfilePage.jsx"));
 
 function App() {
   // const {authUser,checkAuth,isCheckingAuth, onlineUsers}= useAuthStore();
@@ -42,56 +43,105 @@ function App() {
   return (
     <>
       {/* <div data-theme ={theme}></div> */}
-      <Navbar />
-      <Suspense fallback={<div className="flex items-center justify-center h-screen"><Loader className="size-10 animate-spin" /></div>}>
+      
+
       <Routes>
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              {" "}
-              <HomePage />{" "}
-            </PrivateRoute>
+        
+        <Route path="/" element={<PrivateRoute> <MainLayout /> </PrivateRoute>}>
+
+        
+          <Route
+            index
+            element={
+              <PrivateRoute>
+                <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="size-10 animate-spin" />
+            </div>
           }
-        ></Route>
-        <Route
-          path="/signup"
-          element={
-            <PublicRoute>
-              {" "}
-              <SignupPage />{" "}
-            </PublicRoute>
+        >
+                <HomePage />
+                </Suspense>
+              </PrivateRoute>
+            }
+          ></Route>
+          <Route
+            path="/setting"
+            element={
+              <PrivateRoute>
+                <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="size-10 animate-spin" />
+            </div>
           }
-        ></Route>
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              {" "}
-              <LoginPage />{" "}
-            </PublicRoute>
+        >
+                <SettingPage />
+                </Suspense>
+              </PrivateRoute>
+            }
+          ></Route>
+        
+        
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="size-10 animate-spin" />
+            </div>
           }
-        ></Route>
-        <Route
-          path="/setting"
-          element={
-            <PrivateRoute>
-              {" "}
-              <SettingPage />{" "}
-            </PrivateRoute>
+        >
+                <ProfilePage />
+                </Suspense>
+              </PrivateRoute>
+            }
+          ></Route>
+        </Route>
+        
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="size-10 animate-spin" />
+            </div>
           }
-        ></Route>
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              {" "}
-              <ProfilePage />{" "}
-            </PrivateRoute>
+        >
+                <SignupPage />
+                </Suspense>
+              </PublicRoute>
+            }
+          ></Route>
+        
+        
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="size-10 animate-spin" />
+            </div>
           }
-        ></Route>
+        >
+                <LoginPage />
+                </Suspense>
+              </PublicRoute>
+            }
+          ></Route>
+        
+        
+          
+        
       </Routes>
-      </Suspense>
+
       <Toaster></Toaster>
     </>
   );

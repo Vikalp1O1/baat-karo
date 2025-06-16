@@ -8,7 +8,7 @@ const app = express();
 // dotenv.config();
 const server = createServer(app);
 
-const userSocketMap = {};//storing the online user as userId=key & socketId = value
+const userSocketMap = {};
 
 
 const io = new Server(server,{
