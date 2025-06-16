@@ -2,8 +2,8 @@ import { create } from "zustand";
 
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
-
-export const useChatStore = create((set) => ({
+import {useAuthStore} from "./userAuthStore";
+export const useChatStore = create((set,get) => ({
   messages: [],
   users: [],
   selectedUser: null,
@@ -31,8 +31,9 @@ export const useChatStore = create((set) => ({
     try {
       const response = await axiosInstance.get(`/message/${userId}`);
       set({
-        messages: response.data,
+        messages: response.data.data,
       });
+        console.log("API response from /message:", response.data)
     } catch (error) {
       console.error("Error fetching messages:", error);
       toast.error("Failed to load messages");
@@ -41,7 +42,54 @@ export const useChatStore = create((set) => ({
     }
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser}),
+  sendMessages:async (messageData)=>{
+    const {selectedUser , messages} =get();
+    try{
+      const response =  await axiosInstance.post(`/message/send/${selectedUser._id}`, messageData);
+      console.log(response.data.data);
+      set({
+        messages: [...messages, response.data.data],
+
+      });
+      
+      console.log("messages",messages);
+      // set({selectedUser:selectedUser._id})
+      
+      // console.log("messages data",response.config.data );
+    }
+    catch(error){
+      toast.error("Failed to send message");
+    }
+  },
+
+  subscribeToMessages:()=>{
+    const {selectedUser} = get();
+
+    if(!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket;
+
+    socket.on('newMessage',(newMessage)=>{
+      set({
+        messages: [...get().messages,newMessage],
+      })
+    })
+  },
+
+  unsubscribeFromMessages: ()=>{
+    const socket = useAuthStore.getState().socket;
+
+    socket.off('newMessage');
+  },
+
+  setSelectedUser: (selectedUser) => {
+    if (selectedUser) {
+    localStorage.setItem("lastSelectedUser", JSON.stringify(selectedUser));
+  } else {
+    localStorage.removeItem("lastSelectedUser");
+  }
+  set({ selectedUser });
+  },
 
 
 

@@ -13,7 +13,7 @@ const ProfilePage = () => {
 
     const reader = new FileReader();
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file) ;
 
     reader.onload = async () => {
       const base64Image = reader.result;
@@ -39,7 +39,7 @@ const ProfilePage = () => {
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
-                src={selectedImg || authUser.data.profilePic || "/user.jpg"}
+                src={selectedImg || authUser.profilePic || "/user.jpg"}
                 alt="Profile"
                 className="size-32 rounded-full object-cover border-4 "
               />

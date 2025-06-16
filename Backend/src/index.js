@@ -5,8 +5,8 @@ import authRoutes from './routes/auth.routes.js';
 import cookieParser from 'cookie-parser';
 import messageRoutes from './routes/message.routes.js';
 import cors from 'cors';
+import { app, server, } from './lib/socket.js';
 dotenv.config();
-const app = express();
 
 app.use(cors({
   origin:process.env.FRONTEND_URL,
@@ -23,7 +23,7 @@ const PORT=process.env.PORT || 5001;
 connectDB()
   .then(() => {
     console.log('Database connected successfully');
-    app.listen(PORT,()=>{
+    server.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
     
 });
@@ -31,4 +31,3 @@ connectDB()
   .catch((err) => {
     console.error('Database connection failed:', err);
   });
-

@@ -3,11 +3,18 @@ import { useChatStore } from '../store/useChatStore';
 import NoChatSelected from '../Components/NoChatSelected';
 import ChatContainer from '../Components/ChatContainer';
 import Sidebar from '../Components/Sidebar';
+import { useEffect } from 'react';
 
 function HomePage() {
 
-  const {selectedUser} = useChatStore();
+  const {selectedUser, setSelectedUser} = useChatStore();
 
+  useEffect(() => {
+    const lastSelectedUser = localStorage.getItem("lastSelectedUser");
+    if (lastSelectedUser) {
+      setSelectedUser(JSON.parse(lastSelectedUser));
+    }
+  }, [setSelectedUser]);
 
   return (
    <div className="h-screen bg-base-200">

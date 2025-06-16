@@ -1,3 +1,5 @@
+import cloudinary from "../lib/cloudinary.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 
@@ -21,8 +23,8 @@ try {
     // const senderId = req.user._id;
     const conversations = await Message.find({
         $or:[
-            { sender: senderId, receiver: receiverId },
-            { sender: receiverId, receiver: senderId }
+            { senderId: senderId, receiverId: receiverId },
+            { senderId: receiverId, receiverId: senderId }
         ]
     });
 
@@ -53,7 +55,15 @@ const sendMessage = async({text,image,senderId,receiverId})=>{
             receiverId
         });
 
-        return await newMessage.save();
+         await newMessage.save();
+
+        const recieverSocketId = getReceiverSocketId(receiverId);
+        if(recieverSocketId){
+
+            io.to(recieverSocketId).emit("newMessage",newMessage);
+        }
+
+        return newMessage;
 
 
     } catch (error) {
